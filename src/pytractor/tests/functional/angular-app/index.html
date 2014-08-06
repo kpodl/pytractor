@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Test App</title>
+        <script src="angular.js"></script>
+    </head>
+    <body ng-app="test">
+
+        <div ng-controller="TestCtrl">
+            <span id="test-binding">{{test}}</span>
+        </div>
+        <span>Some text not used in a binding.</span>
+        <script>
+            my_module = angular.module('test', []);
+            my_module.controller('TestCtrl', function($scope) {
+                $scope.test ='Hello World!';
+            });
+        </script>
+    </body>
+</html>
