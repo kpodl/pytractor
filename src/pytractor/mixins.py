@@ -115,6 +115,21 @@ class WebDriverMixin(object):
         else:
             return elements[0]
 
+    def find_element_by_exact_binding(self, descriptor, using=None):
+        elements = self.find_elements_by_exact_binding(descriptor, using=using)
+        if len(elements) == 0:
+            raise NoSuchElementException(
+                "No element found for binding descriptor"
+                " '{}'".format(descriptor)
+            )
+        else:
+            return elements[0]
+
+    def find_elements_by_exact_binding(self, descriptor, using=None):
+        elements = self._execute_client_script('findBindings', descriptor,
+                                               True, using, async=False)
+        return elements
+
     def get(self, url):
         super(WebDriverMixin, self).get('about:blank')
         full_url = urljoin(self._base_url, url)
