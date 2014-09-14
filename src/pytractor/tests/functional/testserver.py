@@ -54,6 +54,13 @@ class TestServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         else:
             return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
+    def log_message(self, msg_format, *args):
+        """Use python logging to avoid lots of output during testing."""
+        logger.info("TESTSERVER: %s - - [%s] %s\n" %
+                    (self.client_address[0],
+                     self.log_date_time_string(),
+                     msg_format % args))
+
 
 class SimpleWebServerProcess(object):
     """
