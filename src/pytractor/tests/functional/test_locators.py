@@ -37,19 +37,29 @@ class ByBindingLocatorTest(TestCase):
     def tearDownClass(cls):
         cls.driver.quit()
 
-    def test_find_element_by_binding_raises_error_if_no_element_matches(self):
+    def setUp(self):
         self.driver.get('index.html#/form')
+
+    def test_find_element_by_binding_raises_error_if_no_element_matches(self):
         with self.assertRaises(NoSuchElementException):
             self.driver.find_element_by_binding('no-such-binding')
 
     def test_find_element_by_binding_returns_correct_element(self):
-        self.driver.get('index.html#/form')
         element = self.driver.find_element_by_binding('greeting')
         self.assertIsInstance(element, WebElement)
         self.assertEqual(element.text, 'Hiya')
 
     def test_find_element_by_binding_finds_element_by_partial_name(self):
-        self.driver.get('index.html#/form')
         element = self.driver.find_element_by_binding('greet')
         self.assertIsInstance(element, WebElement)
         self.assertEqual(element.text, 'Hiya')
+
+    def test_find_element_by_binding_finds_element_with_ng_bind(self):
+        element = self.driver.find_element_by_binding('username')
+        self.assertIsInstance(element, WebElement)
+        self.assertEqual(element.text, 'Anon')
+
+    def test_find_element_by_binding_finds_element_with_ng_bind_template(self):
+        element = self.driver.find_element_by_binding('nickname|uppercase')
+        self.assertIsInstance(element, WebElement)
+        self.assertEqual(element.text, '(ANNIE)')
