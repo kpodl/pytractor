@@ -13,7 +13,8 @@
 # limitations under the License.
 
 """
-Functional tests for webdrivers: Simple tests for Firefox and Chrome drivers.
+Simple tests for Firefox and Chrome drivers. We just see if the drivers can
+be instantiated and run a simple test.
 """
 import unittest
 
@@ -40,10 +41,10 @@ class WebDriverTestBase(object):
         cls.driver.quit()
 
     def test_find_element_by_binding(self):
-        self.driver.get('index.html')
-        element = self.driver.find_element_by_binding('test')
+        self.driver.get('index.html#/form')
+        element = self.driver.find_element_by_binding('greeting')
         self.assertIsInstance(element, WebElement)
-        self.assertEqual(element.get_attribute('id'), 'test-binding')
+        self.assertEqual(element.text, 'Hiya')
 
 
 class FirefoxWebDriverTest(WebDriverTestBase, unittest.TestCase):
