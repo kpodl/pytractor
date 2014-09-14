@@ -63,3 +63,12 @@ class ByBindingLocatorTest(TestCase):
         element = self.driver.find_element_by_binding('nickname|uppercase')
         self.assertIsInstance(element, WebElement)
         self.assertEqual(element.text, '(ANNIE)')
+
+    def test_find_element_by_exact_binding_finds_correct_element(self):
+        element = self.driver.find_element_by_exact_binding('greeting')
+        self.assertIsInstance(element, WebElement)
+        self.assertEqual(element.text, 'Hiya')
+
+    def test_find_element_by_exact_binding_needs_complete_binding_name(self):
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_exact_binding('greet')
