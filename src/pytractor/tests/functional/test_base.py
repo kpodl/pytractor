@@ -15,22 +15,13 @@
 
 from unittest import TestCase
 
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.remote.webelement import WebElement
-
 from pytractor.exceptions import AngularNotFoundException
-from pytractor.mixins import WebDriverMixin
 
-from . import SimpleWebServerProcess
-
-
-class TestDriver(WebDriverMixin, webdriver.Firefox):
-    """We use the Firefox driver with our mixin for these tests."""
-    pass
+from .testdriver import TestDriver
+from .testserver import SimpleWebServerProcess
 
 
-class WebDriverMixinTest(TestCase):
+class WebDriverBaseTest(TestCase):
     """Tests the WebDriverMixin."""
     driver = None
 
@@ -48,14 +39,3 @@ class WebDriverMixinTest(TestCase):
     def test_get_no_angular(self):
         with self.assertRaises(AngularNotFoundException):
             self.driver.get('index-no-angular.html')
-
-    def test_find_element_by_binding_no_element(self):
-        self.driver.get('index.html')
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_binding('no-such-binding')
-
-    def test_find_element_by_binding(self):
-        self.driver.get('index.html')
-        element = self.driver.find_element_by_binding('test')
-        self.assertIsInstance(element, WebElement)
-        self.assertEqual(element.get_attribute('id'), 'test-binding')

@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Copyright 2014 Konrad Podloucky
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Functional tests for webdrivers: Simple tests for Firefox and Chrome drivers.
-"""
-import unittest
+from unittest import TestCase
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 
-from pytractor.webdriver import Firefox, Chrome
+from .testdriver import TestDriver
+from .testserver import SimpleWebServerProcess
 
-from . import SimpleWebServerProcess
 
-
-class WebDriverTestBase(object):
-    driver_class = None
+class WebDriverLocatorsTest(TestCase):
+    """Tests the locators of the WebDriverMixin."""
     driver = None
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = cls.driver_class(
+        cls.driver = TestDriver(
             'http://localhost:{}/'.format(SimpleWebServerProcess.PORT),
             'body'
         )
@@ -39,16 +37,19 @@ class WebDriverTestBase(object):
     def tearDownClass(cls):
         cls.driver.quit()
 
+    def test_find_element_by_binding_no_element(self):
+        self.driver.get('index.html#/form')
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_binding('no-such-binding')
+
     def test_find_element_by_binding(self):
-        self.driver.get('index.html')
-        element = self.driver.find_element_by_binding('test')
+        self.driver.get('index.html#/form')
+        element = self.driver.find_element_by_binding('greeting')
         self.assertIsInstance(element, WebElement)
-        self.assertEqual(element.get_attribute('id'), 'test-binding')
+        self.assertEqual(element.text, 'Hiya')
 
-
-class FirefoxWebDriverTest(WebDriverTestBase, unittest.TestCase):
-    driver_class = Firefox
-
-
-class ChromeWebDriverTest(WebDriverTestBase, unittest.TestCase):
-    driver_class = Chrome
+    def test_find_element_by_partial_binding(self):
+        self.driver.get('index.html#/form')
+        element = self.driver.find_element_by_binding('greet')
+        self.assertIsInstance(element, WebElement)
+        self.assertEqual(element.text, 'Hiya')
