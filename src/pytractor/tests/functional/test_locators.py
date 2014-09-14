@@ -22,8 +22,8 @@ from .testdriver import TestDriver
 from .testserver import SimpleWebServerProcess
 
 
-class WebDriverLocatorsTest(TestCase):
-    """Tests the locators of the WebDriverMixin."""
+class ByBindingLocatorTest(TestCase):
+    """Tests the locators of the WebDriverMixin that deal with bindings."""
     driver = None
 
     @classmethod
