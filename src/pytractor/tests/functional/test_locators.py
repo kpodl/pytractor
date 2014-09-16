@@ -22,8 +22,8 @@ from .testdriver import TestDriver
 from .testserver import SimpleWebServerProcess
 
 
-class ByBindingLocatorTest(TestCase):
-    """Tests the locators of the WebDriverMixin that deal with bindings."""
+class LocatorTestCase(TestCase):
+    """Test case class for testing locators."""
     driver = None
 
     @classmethod
@@ -39,6 +39,10 @@ class ByBindingLocatorTest(TestCase):
 
     def setUp(self):
         self.driver.get('index.html#/form')
+
+
+class ByBindingLocatorTest(LocatorTestCase):
+    """Tests the locators of the WebDriverMixin that deal with bindings."""
 
     def test_find_element_by_binding_raises_error_if_no_element_matches(self):
         with self.assertRaises(NoSuchElementException):
