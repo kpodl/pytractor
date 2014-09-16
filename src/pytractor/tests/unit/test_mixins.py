@@ -399,3 +399,50 @@ class WebDriverMixinTest(unittest.TestCase):
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
+
+    def test_find_element_by_model_calls_find_elements(self):
+        mock_descriptor = MagicMock()
+        mock_using = MagicMock()
+        with patch.object(
+            self.instance, 'find_elements_by_model', return_value=[]
+        ) as mock_find_elements_by_model:
+            with self.assertRaises(NoSuchElementException):
+                self.instance.find_element_by_model(
+                    mock_descriptor, mock_using
+                )
+        mock_find_elements_by_model.assert_called_once_with(
+            mock_descriptor, using=mock_using
+        )
+
+    def test_find_element_by_model_raises_error_if_nothing_found(self):
+        mock_descriptor = MagicMock()
+        mock_using = MagicMock()
+        with patch.object(
+            self.instance, 'find_elements_by_model', return_value=[]
+        ) as mock_find_elements_by_model:
+            with self.assertRaises(NoSuchElementException):
+                self.instance.find_element_by_model(
+                    mock_descriptor, mock_using
+                )
+        mock_find_elements_by_model.assert_called_once_with(
+            mock_descriptor, using=mock_using
+        )
+
+    def test_find_elements_by_model_calls_protractor_script(self):
+        mock_descriptor = MagicMock()
+        mock_using = MagicMock()
+
+        with patch.multiple(
+            self.instance, wait_for_angular=DEFAULT,
+            _execute_client_script=DEFAULT
+        ) as mock_methods:
+            result = self.instance.find_elements_by_model(
+                mock_descriptor, mock_using
+            )
+
+        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['_execute_client_script'].assert_called_once_with(
+            'findByModel', mock_descriptor, mock_using, async=False
+        )
+        self.assertIs(result,
+                      mock_methods['_execute_client_script'].return_value)

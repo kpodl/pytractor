@@ -76,3 +76,66 @@ class ByBindingLocatorTest(LocatorTestCase):
     def test_find_element_by_exact_binding_needs_complete_binding_name(self):
         with self.assertRaises(NoSuchElementException):
             self.driver.find_element_by_exact_binding('greet')
+
+
+class ByModelLocatorTest(LocatorTestCase):
+    def test_find_element_by_model_finds_element_by_text_input_model(self):
+        username = self.driver.find_element_by_model('username')
+        name = self.driver.find_element_by_binding('username')
+
+        username.clear()
+        self.assertEqual(name.text, '')
+
+        username.send_keys('Jane Doe')
+        self.assertEqual(name.text, 'Jane Doe')
+
+        username.clear()
+        self.assertEqual(name.text, '')
+
+    def test_find_element_by_model_finds_element_by_checkbox_input_model(self):
+        shower = self.driver.find_element_by_id('shower')
+        self.assertTrue(shower.is_displayed())
+
+        colors = self.driver.find_element_by_model('show')
+        colors.click()
+
+        shower = self.driver.find_element_by_id('shower')
+        self.assertFalse(shower.is_displayed())
+
+    def test_find_element_by_model_finds_textarea_by_model(self):
+        about = self.driver.find_element_by_model('aboutbox')
+        self.assertEqual(about.get_attribute('value'), 'This is a text box')
+
+        about.clear()
+        about.send_keys('Something else to write about')
+
+        self.assertEqual(about.get_attribute('value'),
+                         'Something else to write about')
+
+    def test_find_elements_by_model_find_multiple_selects_by_model(self):
+        selects = self.driver.find_elements_by_model('dayColor.color')
+
+        self.assertEqual(len(selects), 3)
+
+    def test_find_element_by_model_finds_the_selected_option(self):
+        select = self.driver.find_element_by_model('fruit')
+        selected_option = select.find_element_by_css_selector('option:checked')
+
+        self.assertEqual(selected_option.text, 'apple')
+
+    def test_find_element_by_model_finds_inputs_with_alternate_attribute_forms(
+        self
+    ):
+        letter_list = self.driver.find_element_by_id('letterlist')
+        self.assertEqual(letter_list.text, '')
+
+        self.driver.find_element_by_model('check.w').click()
+        self.assertEqual(letter_list.text, 'w')
+
+        self.driver.find_element_by_model('check.x').click()
+        self.assertEqual(letter_list.text, 'wx')
+
+    def test_find_elements_by_model_finds_multiple_inputs(self):
+        inputs = self.driver.find_elements_by_model('color')
+
+        self.assertEqual(len(inputs), 3)
