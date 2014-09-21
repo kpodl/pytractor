@@ -65,7 +65,7 @@ setup(
                            exclude=['tests', '*.tests', '*.tests.*']),
 
     install_requires=[
-        'selenium>=2.42.1'
+        'selenium>=2.43.0'
     ],
 
     package_data={
@@ -74,7 +74,7 @@ setup(
     },
 
     tests_require = [
-        'nose>=1.3.3',
+        'nose>=1.3.4',
         'mock>=1.0.1'
     ],
     test_suite = 'nose.collector'
