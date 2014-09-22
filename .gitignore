@@ -1,2 +1,6 @@
 *.pyc
 *~
+# Eclipse - Pydev
+.project
+.pydevproject
+.settings
