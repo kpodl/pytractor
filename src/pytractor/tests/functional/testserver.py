@@ -38,21 +38,21 @@ class TestServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-type", 'text/plain')
         self.send_header("Content-Length", len(text))
         self.end_headers()
-        return text
+        self.wfile.write(text)
 
     def do_GET(self):
         if self.path == '/fastcall':
-            return self.send_text_response('done')
+            self.send_text_response('done')
         elif self.path == '/slowcall':
             time.sleep(5)
-            return self.send_text_response('finally done')
+            self.send_text_response('finally done')
         elif self.path == '/fastTemplateUrl':
-            return self.send_text_response('fast template contents')
+            self.send_text_response('fast template contents')
         elif self.path == '/slowTemplateUrl':
             time.sleep(5)
-            return self.send_text_response('slow template contents')
+            self.send_text_response('slow template contents')
         else:
-            return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
     def log_message(self, msg_format, *args):
         """Use python logging to avoid lots of output during testing."""
@@ -88,6 +88,7 @@ class SimpleWebServerProcess(object):
                      ' port {}'.format(server_path, self.PORT))
         os.chdir(server_path)
         handler = TestServerHandler
+        SocketServer.TCPServer.allow_reuse_address = True
         httpd = SocketServer.TCPServer((self.HOST, self.PORT), handler)
         httpd.serve_forever()
 
@@ -97,3 +98,9 @@ class SimpleWebServerProcess(object):
                          ' pid {}'.format(self._pid))
             os.kill(self._pid, signal.SIGTERM)
             os.waitpid(self._pid, 0)
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    # start blocking server, do not fork into the background
+    process = SimpleWebServerProcess()
+    process.start_server()
