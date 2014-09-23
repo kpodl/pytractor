@@ -21,6 +21,7 @@ from math import floor
 from urlparse import urljoin
 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.command import Command
 from selenium.webdriver.support.wait import WebDriverWait
 
 from pkg_resources import resource_string
@@ -29,6 +30,22 @@ from .exceptions import AngularNotFoundException
 
 CLIENT_SCRIPTS_DIR = 'protractor/extracted'
 DEFER_LABEL = 'NG_DEFER_BOOTSTRAP!'
+# These are commands that need synchronization with the angular app.
+COMMANDS_NEEDING_WAIT = [
+    Command.CLICK_ELEMENT,
+    Command.SEND_KEYS_TO_ELEMENT,
+    Command.GET_ELEMENT_TAG_NAME,
+    Command.GET_ELEMENT_VALUE_OF_CSS_PROPERTY,
+    Command.GET_ELEMENT_ATTRIBUTE,
+    Command.GET_ELEMENT_TEXT,
+    Command.GET_ELEMENT_SIZE,
+    Command.GET_ELEMENT_LOCATION,
+    Command.IS_ELEMENT_ENABLED,
+    Command.IS_ELEMENT_SELECTED,
+    Command.IS_ELEMENT_DISPLAYED,
+    Command.SUBMIT_ELEMENT,
+    Command.CLEAR_ELEMENT
+]
 
 
 def angular_wait_required(wrapped):
@@ -67,6 +84,13 @@ class WebDriverMixin(object):
     def wait_for_angular(self):
         return self._execute_client_script('waitForAngular',
                                            self._root_element)
+
+    def execute(self, driver_command, params=None):
+        # We also get called from WebElement methods/properties.
+        if driver_command in COMMANDS_NEEDING_WAIT:
+            self.wait_for_angular()
+        return super(WebDriverMixin, self).execute(driver_command,
+                                                   params=params)
 
     def _test_for_angular(self):
         return self._execute_client_script('testForAngular',
