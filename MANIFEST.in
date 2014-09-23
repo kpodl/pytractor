@@ -1,0 +1,2 @@
+recursive-include src/pytractor/protractor/extracted *.js
+recursive-include src/pytractor/tests/functional/testapp *

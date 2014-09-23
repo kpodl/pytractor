@@ -35,14 +35,11 @@ setup(
     description='Selenium testing for Angular.js apps',
     long_description=long_description,
 
-    # The project's main homepage.
     url='https://github.com/kpodl/pytractor',
 
-    # Author details
     author='Konrad Podloucky',
     author_email='konrad+pytractor@crunchy-frog.org',
 
-    # Choose your license
     license='Apache 2.0',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -61,17 +58,13 @@ setup(
 
     package_dir={'': 'src'},
 
-    packages=find_packages('src',
-                           exclude=['tests', '*.tests', '*.tests.*']),
+    packages=find_packages('src'),
+
+    # For package data see MANIFEST.in
 
     install_requires=[
         'selenium>=2.43.0'
     ],
-
-    package_data={
-        # protractor's client scripts
-        'pytractor': ['protractor/extracted/*.js']
-    },
 
     tests_require = [
         'nose>=1.3.4',
