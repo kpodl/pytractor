@@ -17,9 +17,6 @@ Contains tests that wait for angular's processing to finish.
 
 from unittest import TestCase
 
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.remote.webelement import WebElement
-
 from .testdriver import TestDriver
 from .testserver import SimpleWebServerProcess
 
@@ -55,7 +52,9 @@ class AngularWaitTest(TestCase):
 
     def test_waits_for_long_javascript_execution(self):
         status = self.driver.find_element_by_binding('slowFunctionStatus')
-        button = self.driver.find_element_by_css_selector('[ng-click="slowFunction()"]')
+        button = self.driver.find_element_by_css_selector(
+            '[ng-click="slowFunction()"]'
+        )
         self.assertEqual(status.text, 'not started')
 
         button.click()
@@ -64,7 +63,9 @@ class AngularWaitTest(TestCase):
 
     def test_does_not_wait_for_timeout(self):
         status = self.driver.find_element_by_binding('slowTimeoutStatus')
-        button = self.driver.find_element_by_css_selector('[ng-click="slowTimeout()"]')
+        button = self.driver.find_element_by_css_selector(
+            '[ng-click="slowTimeout()"]'
+        )
         self.assertEqual(status.text, 'not started')
 
         button.click()
@@ -72,7 +73,9 @@ class AngularWaitTest(TestCase):
         self.assertEqual(status.text, 'pending...')
 
     def test_waits_for_timeout_service(self):
-        status = self.driver.find_element_by_binding('slowAngularTimeoutStatus')
+        status = self.driver.find_element_by_binding(
+            'slowAngularTimeoutStatus'
+        )
         button = self.driver.find_element_by_css_selector(
             '[ng-click="slowAngularTimeout()"]'
         )
@@ -83,8 +86,12 @@ class AngularWaitTest(TestCase):
         self.assertEqual(status.text, 'done')
 
     def test_waits_for_timeout_service_then_a_promise(self):
-        status = self.driver.find_element_by_binding('slowAngularTimeoutPromiseStatus')
-        button = self.driver.find_element_by_css_selector('[ng-click="slowAngularTimeoutPromise()"]')
+        status = self.driver.find_element_by_binding(
+            'slowAngularTimeoutPromiseStatus'
+        )
+        button = self.driver.find_element_by_css_selector(
+            '[ng-click="slowAngularTimeoutPromise()"]'
+        )
         self.assertEqual(status.text, 'not started')
 
         button.click()
@@ -93,7 +100,9 @@ class AngularWaitTest(TestCase):
 
     def test_waits_for_long_http_call_then_a_promise(self):
         status = self.driver.find_element_by_binding('slowHttpPromiseStatus')
-        button = self.driver.find_element_by_css_selector('[ng-click="slowHttpPromise()"]')
+        button = self.driver.find_element_by_css_selector(
+            '[ng-click="slowHttpPromise()"]'
+        )
         self.assertEqual(status.text, 'not started')
 
         button.click()
@@ -102,7 +111,9 @@ class AngularWaitTest(TestCase):
 
     def test_waits_for_slow_routing_changes(self):
         status = self.driver.find_element_by_binding('routingChangeStatus')
-        button = self.driver.find_element_by_css_selector('[ng-click="routingChange()"]')
+        button = self.driver.find_element_by_css_selector(
+            '[ng-click="routingChange()"]'
+        )
         self.assertEqual(status.text, 'not started')
 
         button.click()
@@ -111,7 +122,9 @@ class AngularWaitTest(TestCase):
 
     def test_waits_for_slow_ng_include_templates_to_load(self):
         status = self.driver.find_element_by_css_selector('.included')
-        button = self.driver.find_element_by_css_selector('[ng-click="changeTemplateUrl()"]')
+        button = self.driver.find_element_by_css_selector(
+            '[ng-click="changeTemplateUrl()"]'
+        )
         self.assertEqual(status.text, 'fast template contents')
 
         button.click()
