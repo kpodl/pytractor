@@ -115,6 +115,13 @@ class WebDriverMixin(object):
     def title(self):
         return super(WebDriverMixin, self).title
 
+    @property
+    @angular_wait_required
+    def location_abs_url(self):
+        pass
+        return self._execute_client_script('getLocationAbsUrl',
+                                           self._root_element, async=False)
+
     @angular_wait_required
     def find_element(self, *args, **kwargs):
         return super(WebDriverMixin, self).find_element(*args, **kwargs)
@@ -196,3 +203,8 @@ class WebDriverMixin(object):
     def refresh(self):
         url = self.execute_script('return window.location.href')
         self.get(url)
+
+    def set_location(self, url):
+        result = self._execute_client_script('setLocation', self._root_element,
+                                             url, async=False)
+        return result

@@ -446,3 +446,32 @@ class WebDriverMixinTest(unittest.TestCase):
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
+
+    def test_location_abs_url_calls_protractor_script(self):
+        with patch.multiple(
+            self.instance, wait_for_angular=DEFAULT,
+            _execute_client_script=DEFAULT
+        ) as mock_methods:
+            result = self.instance.location_abs_url
+
+        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['_execute_client_script'].assert_called_once_with(
+            'getLocationAbsUrl', self.instance._root_element, async=False
+        )
+        self.assertIs(result,
+                      mock_methods['_execute_client_script'].return_value)
+
+    def test_set_location_calls_protractor_script(self):
+        url = 'http://a.new.locat.ion/'
+        with patch.multiple(
+            self.instance, wait_for_angular=DEFAULT,
+            _execute_client_script=DEFAULT
+        ) as mock_methods:
+            result = self.instance.set_location(url)
+
+        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['_execute_client_script'].assert_called_once_with(
+            'setLocation', self.instance._root_element, url, async=False
+        )
+        self.assertIs(result,
+                      mock_methods['_execute_client_script'].return_value)
