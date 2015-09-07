@@ -1,4 +1,12 @@
-try { return (function (repeater, using) {
+try { return (function anonymous() {
+function repeaterMatch(ngRepeat, repeater, exact) {
+  if (exact) {
+    return ngRepeat.split(' track by ')[0].split(' as ')[0].split('|')[0].
+        split('=')[0].trim() == repeater;
+  } else {
+    return ngRepeat.indexOf(repeater) != -1;
+  }
+};  return (function findAllRepeaterRows(repeater, exact, using) {
   using = using || document;
 
   var rows = [];
@@ -8,7 +16,7 @@ try { return (function (repeater, using) {
     var repeatElems = using.querySelectorAll('[' + attr + ']');
     attr = attr.replace(/\\/g, '');
     for (var i = 0; i < repeatElems.length; ++i) {
-      if (repeatElems[i].getAttribute(attr).indexOf(repeater) != -1) {
+      if (repeaterMatch(repeatElems[i].getAttribute(attr), repeater, exact)) {
         rows.push(repeatElems[i]);
       }
     }
@@ -18,10 +26,10 @@ try { return (function (repeater, using) {
     var repeatElems = using.querySelectorAll('[' + attr + ']');
     attr = attr.replace(/\\/g, '');
     for (var i = 0; i < repeatElems.length; ++i) {
-      if (repeatElems[i].getAttribute(attr).indexOf(repeater) != -1) {
+      if (repeaterMatch(repeatElems[i].getAttribute(attr), repeater, exact)) {
         var elem = repeatElems[i];
         while (elem.nodeType != 8 ||
-            elem.nodeValue.indexOf(repeater) == -1) {
+            !repeaterMatch(elem.nodeValue, repeater, exact)) {
           if (elem.nodeType == 1) {
             rows.push(elem);
           }
@@ -31,5 +39,6 @@ try { return (function (repeater, using) {
     }
   }
   return rows;
- }).apply(this, arguments); }
+}).apply(this, arguments);
+}).apply(this, arguments); }
 catch(e) { throw (e instanceof Error) ? e : new Error(e); }

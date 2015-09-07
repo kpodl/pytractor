@@ -1,9 +1,7 @@
 try { return (function (selector) {
   var el = document.querySelector(selector);
-  if (angular.getTestability) {
-    return angular.getTestability(el).
-        getLocation();
-  }
-  return angular.element(el).injector().get('$location').absUrl();
+  var $injector = angular.element(el).injector();
+  var $http = $injector.get('$http');
+  return $http.pendingRequests;
 }).apply(this, arguments); }
 catch(e) { throw (e instanceof Error) ? e : new Error(e); }

@@ -1,14 +1,9 @@
-try { return (function (model, using, rootSelector) {
-  var root = document.querySelector(rootSelector || 'body');
+try { return (function (optionsDescriptor, using) {
   using = using || document;
 
-  if (angular.getTestability) {
-    return angular.getTestability(root).
-        findModels(using, model, true);
-  }
   var prefixes = ['ng-', 'ng_', 'data-ng-', 'x-ng-', 'ng\\:'];
   for (var p = 0; p < prefixes.length; ++p) {
-    var selector = '[' + prefixes[p] + 'model="' + model + '"]';
+    var selector = '[' + prefixes[p] + 'options="' + optionsDescriptor + '"] option';
     var elements = using.querySelectorAll(selector);
     if (elements.length) {
       return elements;
