@@ -39,3 +39,7 @@ class WebDriverBaseTest(TestCase):
     def test_get_no_angular(self):
         with self.assertRaises(AngularNotFoundException):
             self.driver.get('index-no-angular.html')
+
+    def test_get_no_angular_does_not_fail_if_ignore_synchronization_set(self):
+        self.driver.ignore_synchronization = True
+        self.driver.get('index-no-angular.html')

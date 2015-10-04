@@ -58,6 +58,13 @@ def angular_wait_required(wrapped):
 
 class WebDriverMixin(object):
     """A mixin for Selenium Webdrivers."""
+    ignore_synchronization = False
+    """If True, pytractor will not attempt to synchronize with the page before
+    performing actions. This can be harmful because pytractor will not wait
+    until $timeouts and $http calls have been processed, which can cause
+    tests to become flaky. This should be used only when necessary, such as
+    when a page continuously polls an API using $timeout.
+    """  # docstring adapted from protractor.js
     _root_element = None
     _base_url = None
 
@@ -82,8 +89,11 @@ class WebDriverMixin(object):
         return result
 
     def wait_for_angular(self):
-        return self._execute_client_script('waitForAngular',
-                                           self._root_element)
+        if self.ignore_synchronization:
+            return
+        else:
+            return self._execute_client_script('waitForAngular',
+                                               self._root_element)
 
     def execute(self, driver_command, params=None):
         # We also get called from WebElement methods/properties.
@@ -188,17 +198,18 @@ class WebDriverMixin(object):
         wait = WebDriverWait(self, 10)
         wait.until_not(self._location_equals, 'about:blank')
 
-        test_result = self._test_for_angular()
-        angular_on_page = test_result[0]
-        if not angular_on_page:
-            message = test_result[1]
-            raise AngularNotFoundException(
-                'Angular could not be found on page: {}:'
-                ' {}'.format(full_url, message)
-            )
-        # TODO: inject scripts here
-        # return self.execute_script('angular.resumeBootstrap(arguments[0]);')
-        self.execute_script('angular.resumeBootstrap();')
+        if not self.ignore_synchronization:
+            test_result = self._test_for_angular()
+            angular_on_page = test_result[0]
+            if not angular_on_page:
+                message = test_result[1]
+                raise AngularNotFoundException(
+                    'Angular could not be found on page: {}:'
+                    ' {}'.format(full_url, message)
+                )
+            # TODO: inject scripts here
+            # return self.execute_script('angular.resumeBootstrap(arguments[0]);')
+            self.execute_script('angular.resumeBootstrap();')
 
     def refresh(self):
         url = self.execute_script('return window.location.href')

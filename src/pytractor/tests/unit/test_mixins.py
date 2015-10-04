@@ -18,6 +18,7 @@ from mock import MagicMock, patch, PropertyMock, DEFAULT
 
 from selenium.common.exceptions import NoSuchElementException
 
+from pytractor.exceptions import AngularNotFoundException
 from pytractor.mixins import (WebDriverMixin, angular_wait_required,
                               CLIENT_SCRIPTS_DIR)
 
@@ -158,6 +159,21 @@ class WebDriverMixinTest(unittest.TestCase):
             self.instance.wait_for_angular,
             'waitForAngular', self.mock_root_element
         )
+
+    def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(
+        self
+    ):
+        """wait_for_angular() must not call the waitForAngular script, if
+        ignore_synchronization is set to True."""
+        self.instance.ignore_synchronization = True
+
+        with patch.object(
+            self.instance, '_execute_client_script'
+        ) as mock_execute_client_script:
+
+            self.instance.wait_for_angular()
+
+        self.assertEqual(mock_execute_client_script.call_count, 0)
 
     def test__test_for_angular(self):
         self.instance._test_timeout = 5000
@@ -327,7 +343,7 @@ class WebDriverMixinTest(unittest.TestCase):
             mock_test_for_angular.return_value = (False, 'ERROR')
             mock_execute_script = mock_methods['execute_script']
 
-            with self.assertRaises(Exception):
+            with self.assertRaises(AngularNotFoundException):
                 self.instance.get(mock_url)
         mock_super.assert_called_once_with(WebDriverMixin, self.instance)
         mock_super.return_value.get.assert_called_once_with('about:blank')
@@ -339,6 +355,27 @@ class WebDriverMixinTest(unittest.TestCase):
             self.instance._location_equals, 'about:blank'
         )
         mock_test_for_angular.assert_called_once_with()
+
+    def test_get_does_not_test_for_angular_if_ignore_synchronization_is_true(
+        self
+    ):
+        """Verify that get() does not call _test_for_angular if
+        ignore_synchronization is set to True."""
+        mock_url = MagicMock()
+        with patch(
+            '__builtin__.super'
+        ) as mock_super, patch(
+            'pytractor.mixins.WebDriverWait'
+        ) as mock_webdriverwait_class, patch.multiple(
+            self.instance, _test_for_angular=DEFAULT, execute_script=DEFAULT,
+            create=True  # needed for execute_script
+        ) as mock_methods:
+            mock_test_for_angular = mock_methods['_test_for_angular']
+
+            self.instance.ignore_synchronization = True
+            self.instance.get(mock_url)
+
+        self.assertEqual(mock_test_for_angular.call_count, 0)
 
     def test_refresh(self):
         with patch.multiple(
