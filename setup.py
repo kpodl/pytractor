@@ -63,12 +63,12 @@ setup(
     # For package data see MANIFEST.in
 
     install_requires=[
-        'selenium>=2.43.0'
+        'selenium>=2.47.3'
     ],
 
     tests_require = [
-        'nose>=1.3.4',
-        'mock>=1.0.1'
+        'nose>=1.3.7',
+        'mock>=1.0.1,<1.1.0'  # >= 1.1.0 seems to be broken.
     ],
     test_suite = 'nose.collector'
 )
