@@ -32,7 +32,7 @@ CLIENT_SCRIPTS_DIR = 'protractor/extracted'
 DEFER_LABEL = 'NG_DEFER_BOOTSTRAP!'
 # These are commands that need synchronization with the angular app.
 COMMANDS_NEEDING_WAIT = [
-    Command.CLICK_ELEMENT,
+    #Command.CLICK_ELEMENT,
     Command.SEND_KEYS_TO_ELEMENT,
     Command.GET_ELEMENT_TAG_NAME,
     Command.GET_ELEMENT_VALUE_OF_CSS_PROPERTY,
@@ -82,8 +82,9 @@ class WebDriverMixin(object):
         return result
 
     def wait_for_angular(self):
+        print "yep"
         return self._execute_client_script('waitForAngular',
-                                           self._root_element)
+                                           self._root_element)  
 
     def execute(self, driver_command, params=None):
         # We also get called from WebElement methods/properties.
@@ -176,7 +177,7 @@ class WebDriverMixin(object):
                                                using, async=False)
         return elements
 
-    def get(self, url):
+    def get(self, url, require_angular=True):
         super(WebDriverMixin, self).get('about:blank')
         full_url = urljoin(self._base_url, url)
         self.execute_script(
@@ -188,21 +189,22 @@ class WebDriverMixin(object):
         wait = WebDriverWait(self, 10)
         wait.until_not(self._location_equals, 'about:blank')
 
-        test_result = self._test_for_angular()
-        angular_on_page = test_result[0]
-        if not angular_on_page:
-            message = test_result[1]
-            raise AngularNotFoundException(
-                'Angular could not be found on page: {}:'
-                ' {}'.format(full_url, message)
-            )
-        # TODO: inject scripts here
-        # return self.execute_script('angular.resumeBootstrap(arguments[0]);')
-        self.execute_script('angular.resumeBootstrap();')
+        if require_angular:
+            test_result = self._test_for_angular()
+            angular_on_page = test_result[0]
+            if not angular_on_page:
+                message = test_result[1]
+                raise AngularNotFoundException(
+                    'Angular could not be found on page: {}:'
+                    ' {}'.format(full_url, message)
+                )
+            # TODO: inject scripts here
+            # return self.execute_script('angular.resumeBootstrap(arguments[0]);')
+            self.execute_script('angular.resumeBootstrap();')
 
-    def refresh(self):
+    def refresh(self, angular=True):
         url = self.execute_script('return window.location.href')
-        self.get(url)
+        self.get(url, angular)
 
     def set_location(self, url):
         result = self._execute_client_script('setLocation', self._root_element,
