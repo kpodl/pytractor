@@ -61,6 +61,7 @@ setup(
     packages=find_packages('src'),
 
     # For package data see MANIFEST.in
+    include_package_data=True,
 
     install_requires=[
         'selenium>=2.47.3'
