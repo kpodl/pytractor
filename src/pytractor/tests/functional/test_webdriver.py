@@ -20,7 +20,9 @@ import unittest
 
 from selenium.webdriver.remote.webelement import WebElement
 
+# pylint: disable=no-name-in-module
 from pytractor.webdriver import Firefox, Chrome
+# pylint: enable=no-name-in-module
 
 from . import SimpleWebServerProcess
 

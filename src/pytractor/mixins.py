@@ -128,7 +128,6 @@ class WebDriverMixin(object):
     @property
     @angular_wait_required
     def location_abs_url(self):
-        pass
         return self._execute_client_script('getLocationAbsUrl',
                                            self._root_element, async=False)
 
@@ -208,7 +207,9 @@ class WebDriverMixin(object):
                     ' {}'.format(full_url, message)
                 )
             # TODO: inject scripts here
-            # return self.execute_script('angular.resumeBootstrap(arguments[0]);')
+            # return self.execute_script(
+            #     'angular.resumeBootstrap(arguments[0]);'
+            # )
             self.execute_script('angular.resumeBootstrap();')
 
     def refresh(self):

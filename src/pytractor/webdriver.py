@@ -21,7 +21,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from .mixins import WebDriverMixin
 
-module_dict = globals()
+module_dict = globals()  # pylint: disable=invalid-name
 __all__ = []
 
 # build classes derived from selenium webdrivers and our WebDriverMixin

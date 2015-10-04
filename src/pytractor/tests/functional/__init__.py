@@ -22,14 +22,14 @@ import time
 
 from .testserver import SimpleWebServerProcess
 
-webserver_process = None
+WEBSERVER_PROCESS = None
 
 
 def setup_package():
-    global webserver_process
-    webserver_process = SimpleWebServerProcess()
-    webserver_process.run()
+    global WEBSERVER_PROCESS  # pylint: disable=global-statement
+    WEBSERVER_PROCESS = SimpleWebServerProcess()
+    WEBSERVER_PROCESS.run()
 
 
 def teardown_package():
-    webserver_process.stop()
+    WEBSERVER_PROCESS.stop()
