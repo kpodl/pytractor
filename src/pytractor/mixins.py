@@ -18,7 +18,6 @@ webdrivers.
 
 from functools import wraps
 from math import floor
-from urlparse import urljoin
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.command import Command
@@ -82,6 +81,8 @@ class WebDriverMixin(object):
         js_script = resource_string(__name__,
                                     '{}/{}'.format(CLIENT_SCRIPTS_DIR,
                                                    file_name))
+        if js_script:
+            js_script = js_script.decode('UTF-8')
         if async:
             result = self.execute_async_script(js_script, *args)
         else:
@@ -99,6 +100,7 @@ class WebDriverMixin(object):
         # We also get called from WebElement methods/properties.
         if driver_command in COMMANDS_NEEDING_WAIT:
             self.wait_for_angular()
+
         return super(WebDriverMixin, self).execute(driver_command,
                                                    params=params)
 
@@ -187,7 +189,7 @@ class WebDriverMixin(object):
 
     def get(self, url):
         super(WebDriverMixin, self).get('about:blank')
-        full_url = urljoin(self._base_url, url)
+        full_url = ''.join([str(self._base_url), str(url)])
         self.execute_script(
             """
             window.name = "{}" + window.name;

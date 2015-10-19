@@ -19,8 +19,8 @@ It is started by setup_package() in __init__.py
 import logging
 import os
 import signal
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 import time
 
 PORT = 8000
@@ -28,7 +28,7 @@ PORT = 8000
 logger = logging.getLogger(__name__)
 
 
-class TestServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class TestServerHandler(http.server.SimpleHTTPRequestHandler):
     """
     The handler for the web server. It has the same functionality as the
     server for protractor's test app.
@@ -38,7 +38,7 @@ class TestServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-type", 'text/plain')
         self.send_header("Content-Length", len(text))
         self.end_headers()
-        self.wfile.write(text)
+        self.wfile.write(text.encode('utf-8'))
 
     def do_GET(self):
         if self.path == '/fastcall':
@@ -52,7 +52,7 @@ class TestServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             time.sleep(5)
             self.send_text_response('slow template contents')
         else:
-            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            http.server.SimpleHTTPRequestHandler.do_GET(self)
 
     def log_message(self, msg_format, *args):
         """Use python logging to avoid lots of output during testing."""
@@ -88,8 +88,8 @@ class SimpleWebServerProcess(object):
                      ' port {}'.format(server_path, self.PORT))
         os.chdir(server_path)
         handler = TestServerHandler
-        SocketServer.TCPServer.allow_reuse_address = True
-        httpd = SocketServer.TCPServer((self.HOST, self.PORT), handler)
+        socketserver.TCPServer.allow_reuse_address = True
+        httpd = socketserver.TCPServer((self.HOST, self.PORT), handler)
         httpd.serve_forever()
 
     def stop(self):

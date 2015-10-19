@@ -71,7 +71,7 @@ class WebDriverMixinConstructorTest(unittest.TestCase):
         script_timeout = 'SCRIPTTIMEOUT'
 
         with patch(
-            '__builtin__.super'
+            'builtins.super'
         ) as mock_super, patch.object(
             self.TestDriver, 'set_script_timeout', create=True
         ) as mock_set_script_timeout:
@@ -122,7 +122,7 @@ class WebDriverMixinTest(unittest.TestCase):
             '{}/{}.js'.format(CLIENT_SCRIPTS_DIR, 'SCRIPT')
         )
         # execute_async_script or execute_script were called (but not both)
-        script_content = mock_resource_string.return_value
+        script_content = mock_resource_string.return_value.decode()
         if async:
             mock_execute_async_script.assert_called_once_with(script_content,
                                                               mock_arg)
@@ -160,9 +160,7 @@ class WebDriverMixinTest(unittest.TestCase):
             'waitForAngular', self.mock_root_element
         )
 
-    def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(
-        self
-    ):
+    def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(self):
         """wait_for_angular() must not call the waitForAngular script, if
         ignore_synchronization is set to True."""
         self.instance.ignore_synchronization = True
@@ -204,7 +202,7 @@ class WebDriverMixinTest(unittest.TestCase):
         named property on the super class.
         """
         with patch(
-            '__builtin__.super'
+            'builtins.super'
         ) as mock_super, patch.object(
             self.instance, 'wait_for_angular'
         ) as mock_wait_for_angular:
@@ -236,7 +234,7 @@ class WebDriverMixinTest(unittest.TestCase):
         """
         mock_args = [MagicMock(), MagicMock()]
         with patch(
-            '__builtin__.super'
+            'builtins.super'
         ) as mock_super, patch.object(
             self.instance, 'wait_for_angular'
         ) as mock_wait_for_angular:
@@ -304,7 +302,7 @@ class WebDriverMixinTest(unittest.TestCase):
     def test_get_with_angular(self):
         mock_url = MagicMock()
         with patch(
-            '__builtin__.super'
+            'builtins.super'
         ) as mock_super, patch(
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(
@@ -331,7 +329,7 @@ class WebDriverMixinTest(unittest.TestCase):
     def test_get_without_angular(self):
         mock_url = MagicMock()
         with patch(
-            '__builtin__.super'
+            'builtins.super'
         ) as mock_super, patch(
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(
@@ -356,14 +354,12 @@ class WebDriverMixinTest(unittest.TestCase):
         )
         mock_test_for_angular.assert_called_once_with()
 
-    def test_get_does_not_test_for_angular_if_ignore_synchronization_is_true(
-        self
-    ):
+    def test_get_does_not_test_for_angular_if_ignore_synchronization_is_true(self):
         """Verify that get() does not call _test_for_angular if
         ignore_synchronization is set to True."""
         mock_url = MagicMock()
         with patch(
-            '__builtin__.super'
+            'builtins.super'
         ) as mock_super, patch(
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(

@@ -16,8 +16,8 @@ import logging
 import os
 import os.path
 import signal
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 import time
 
 from .testserver import SimpleWebServerProcess
