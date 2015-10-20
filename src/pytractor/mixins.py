@@ -67,7 +67,7 @@ class WebDriverMixin(object):
     _root_element = None
     _base_url = None
 
-    def __init__(self, base_url, root_element, script_timeout=10,
+    def __init__(self, base_url='', root_element='body', script_timeout=10,
                  test_timeout=10, *args, **kwargs):
         self._base_url = base_url
         self._root_element = root_element
@@ -105,8 +105,7 @@ class WebDriverMixin(object):
                                                    params=params)
 
     def _test_for_angular(self):
-        return self._execute_client_script('testForAngular',
-                                           floor(self._test_timeout / 1000))
+        return self._execute_client_script('testForAngular', floor(self._test_timeout / 1000))
 
     def _location_equals(self, location):
         result = self.execute_script('return window.location.href')
@@ -196,7 +195,7 @@ class WebDriverMixin(object):
             window.location.replace("{}");
             """.format(DEFER_LABEL, full_url)
         )
-        wait = WebDriverWait(self, 10)
+        wait = WebDriverWait(self, self._test_timeout)
         wait.until_not(self._location_equals, 'about:blank')
 
         if not self.ignore_synchronization:
