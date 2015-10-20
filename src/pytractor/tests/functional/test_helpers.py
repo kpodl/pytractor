@@ -23,7 +23,6 @@ from .testserver import SimpleWebServerProcess
 
 class HelperFunctionTestCase(TestCase):
     """Tests for helper functions."""
-    driver = None
 
     @classmethod
     def setUpClass(cls):

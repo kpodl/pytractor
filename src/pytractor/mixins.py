@@ -16,6 +16,8 @@ Mixin to add the capability of testing angular.js apps with selenium
 webdrivers.
 """
 
+import urllib.parse
+
 from functools import wraps
 from math import floor
 
@@ -64,8 +66,6 @@ class WebDriverMixin(object):
     tests to become flaky. This should be used only when necessary, such as
     when a page continuously polls an API using $timeout.
     """  # docstring adapted from protractor.js
-    _root_element = None
-    _base_url = None
 
     def __init__(self, base_url='', root_element='body', script_timeout=10,
                  test_timeout=10, *args, **kwargs):
@@ -133,6 +133,11 @@ class WebDriverMixin(object):
                                            self._root_element, async=False)
 
     @angular_wait_required
+    def find_elements_by_repeater(self, descriptor, using=None):
+        return self._execute_client_script('findAllRepeaterRows',
+                                           descriptor, False, using, async=False)
+
+    @angular_wait_required
     def find_element(self, *args, **kwargs):
         return super(WebDriverMixin, self).find_element(*args, **kwargs)
 
@@ -188,7 +193,7 @@ class WebDriverMixin(object):
 
     def get(self, url):
         super(WebDriverMixin, self).get('about:blank')
-        full_url = ''.join([str(self._base_url), str(url)])
+        full_url = urllib.parse.urljoin(str(self._base_url), str(url))
         self.execute_script(
             """
             window.name = "{}" + window.name;

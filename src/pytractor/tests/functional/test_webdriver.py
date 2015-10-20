@@ -28,8 +28,6 @@ from . import SimpleWebServerProcess
 
 
 class WebDriverTestBase(object):
-    driver_class = None
-    driver = None
 
     @classmethod
     def setUpClass(cls):

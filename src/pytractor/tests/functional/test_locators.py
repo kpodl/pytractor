@@ -24,7 +24,6 @@ from .testserver import SimpleWebServerProcess
 
 class LocatorTestCase(TestCase):
     """Test case class for testing locators."""
-    driver = None
 
     @classmethod
     def setUpClass(cls):
