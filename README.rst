@@ -1,12 +1,12 @@
 =========
 pytractor
 =========
-**Angular.js for the testing goat: Utilities for testing Angular.js applications with Selenium for Python.**
+**Angular.js for the testing goat: Utilities for testing Angular.js applications with Selenium for Python3.**
 
 Overview
 --------
 
-*pytractor* is an extension to the `Selenium bindings for Python <https://pypi.python.org/pypi/selenium>`_. Its goal is to make testing of angular.js applications easier with Python.
+*pytractor* is an extension to the `Selenium bindings for Python3 <https://pypi.python.org/pypi/selenium>`_. Its goal is to make testing of angular.js applications easier with Python3.
 
 It is built on some parts of `protractor <https://github.com/angular/protractor>`_, the "official" Javascript E2E/Scenario testing framework for `Angular.js <https://angularjs.org/>`_.
 
