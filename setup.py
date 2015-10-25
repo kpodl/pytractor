@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 # Copyright 2014 Konrad Podloucky
@@ -69,9 +69,10 @@ setup(
         'selenium>=2.47.3'
     ],
 
-    tests_require = [
+    tests_require=[
         'nose>=1.3.7',
         'mock>=1.0.1,<1.1.0'  # >= 1.1.0 seems to be broken.
     ],
-    test_suite = 'nose.collector'
+    test_suite='nose.collector',
+    use_2to3=True
 )

@@ -23,6 +23,13 @@ from pytractor.mixins import (WebDriverMixin, angular_wait_required,
                               CLIENT_SCRIPTS_DIR)
 
 
+try: #FIXME: find another way
+    import __builtin__
+    super_str = '__builtin__.super'
+except:
+    super_str = 'builtins.super'
+
+
 class AngularWaitRequiredDecoratorTest(unittest.TestCase):
     @angular_wait_required
     def wrapped_function(self, *args, **kwargs):
@@ -71,7 +78,7 @@ class WebDriverMixinConstructorTest(unittest.TestCase):
         script_timeout = 'SCRIPTTIMEOUT'
 
         with patch(
-            'builtins.super'
+            super_str
         ) as mock_super, patch.object(
             self.TestDriver, 'set_script_timeout', create=True
         ) as mock_set_script_timeout:
@@ -202,7 +209,7 @@ class WebDriverMixinTest(unittest.TestCase):
         named property on the super class.
         """
         with patch(
-            'builtins.super'
+                super_str
         ) as mock_super, patch.object(
             self.instance, 'wait_for_angular'
         ) as mock_wait_for_angular:
@@ -234,7 +241,7 @@ class WebDriverMixinTest(unittest.TestCase):
         """
         mock_args = [MagicMock(), MagicMock()]
         with patch(
-            'builtins.super'
+            super_str
         ) as mock_super, patch.object(
             self.instance, 'wait_for_angular'
         ) as mock_wait_for_angular:
@@ -302,7 +309,7 @@ class WebDriverMixinTest(unittest.TestCase):
     def test_get_with_angular(self):
         mock_url = MagicMock()
         with patch(
-            'builtins.super'
+            super_str
         ) as mock_super, patch(
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(
@@ -329,7 +336,7 @@ class WebDriverMixinTest(unittest.TestCase):
     def test_get_without_angular(self):
         mock_url = MagicMock()
         with patch(
-            'builtins.super'
+            super_str
         ) as mock_super, patch(
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(
@@ -359,7 +366,7 @@ class WebDriverMixinTest(unittest.TestCase):
         ignore_synchronization is set to True."""
         mock_url = MagicMock()
         with patch(
-            'builtins.super'
+            super_str
         ) as mock_super, patch(
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(

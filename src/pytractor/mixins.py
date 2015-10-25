@@ -16,10 +16,9 @@ Mixin to add the capability of testing angular.js apps with selenium
 webdrivers.
 """
 
-import urllib.parse
-
 from functools import wraps
 from math import floor
+from future.moves.urllib.parse import urljoin
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.command import Command
@@ -193,7 +192,7 @@ class WebDriverMixin(object):
 
     def get(self, url):
         super(WebDriverMixin, self).get('about:blank')
-        full_url = urllib.parse.urljoin(str(self._base_url), str(url))
+        full_url = urljoin(str(self._base_url), str(url))
         self.execute_script(
             """
             window.name = "{}" + window.name;
