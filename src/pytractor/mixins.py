@@ -1,4 +1,4 @@
-# Copyright 2014 Konrad Podloucky
+# Copyright 2014 Konrad Podloucky, Michal Walkowski
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

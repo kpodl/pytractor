@@ -1,5 +1,5 @@
 # encoding: utf-8
-# Copyright 2014 Konrad Podloucky
+# Copyright 2014 Konrad Podloucky, Michal Walkowski
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,12 +36,13 @@ class LocatorTestCase(TestCase):
     def tearDownClass(cls):
         cls.driver.quit()
 
-    def setUp(self):
-        self.driver.get('index.html#/form')
-
 
 class ByBindingLocatorTest(LocatorTestCase):
     """Tests the locators of the WebDriverMixin that deal with bindings."""
+
+    def setUp(self):
+        self.driver.get('index.html#/form')
+
 
     def test_find_element_by_binding_raises_error_if_no_element_matches(self):
         with self.assertRaises(NoSuchElementException):
@@ -78,6 +79,9 @@ class ByBindingLocatorTest(LocatorTestCase):
 
 
 class ByModelLocatorTest(LocatorTestCase):
+    def setUp(self):
+        self.driver.get('index.html#/form')
+
     def test_find_element_by_model_finds_element_by_text_input_model(self):
         username = self.driver.find_element_by_model('username')
         name = self.driver.find_element_by_binding('username')
@@ -138,3 +142,22 @@ class ByModelLocatorTest(LocatorTestCase):
         inputs = self.driver.find_elements_by_model('color')
 
         self.assertEqual(len(inputs), 3)
+
+
+class ByRepeaterTestCase(LocatorTestCase):
+    def setUp(self):
+        self.driver.get('index.html#/repeater')
+
+    def test_find_elements_by_repeater_returns_correct_element(self):
+        element = self.driver.find_elements_by_repeater('allinfo in days')
+        self.assertEqual(len(element), 5)
+        self.assertEqual(element[0].text, 'M Monday')
+        self.assertEqual(element[1].text, 'T Tuesday')
+        self.assertEqual(element[2].text, 'W Wednesday')
+        self.assertEqual(element[3].text, 'Th Thursday')
+        self.assertEqual(element[4].text, 'F Friday')
+
+    def test_find_elements_by_repeater_returns_empty_list(self):
+        self.assertFalse(
+            self.driver.find_elements_by_repeater('no-such in days')
+        )
