@@ -104,7 +104,8 @@ class WebDriverMixin(object):
                                                    params=params)
 
     def _test_for_angular(self):
-        return self._execute_client_script('testForAngular', floor(self._test_timeout / 1000))
+        return self._execute_client_script('testForAngular',
+                                           floor(self._test_timeout / 1000))
 
     def _location_equals(self, location):
         result = self.execute_script('return window.location.href')
@@ -134,7 +135,8 @@ class WebDriverMixin(object):
     @angular_wait_required
     def find_elements_by_repeater(self, descriptor, using=None):
         return self._execute_client_script('findAllRepeaterRows',
-                                           descriptor, False, using, async=False)
+                                           descriptor, False, using,
+                                           async=False)
 
     @angular_wait_required
     def find_element(self, *args, **kwargs):

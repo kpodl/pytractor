@@ -122,7 +122,9 @@ class ByModelLocatorTest(LocatorTestCase):
 
         self.assertEqual(selected_option.text, 'apple')
 
-    def test_find_element_by_model_finds_inputs_with_alternate_attribute_forms(self):
+    def test_find_element_by_model_finds_inputs_with_alternate_attribute_forms(
+        self
+    ):
         letter_list = self.driver.find_element_by_id('letterlist')
         self.assertEqual(letter_list.text, '')
 

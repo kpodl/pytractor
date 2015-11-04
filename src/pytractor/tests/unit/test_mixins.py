@@ -23,10 +23,10 @@ from pytractor.mixins import (WebDriverMixin, angular_wait_required,
                               CLIENT_SCRIPTS_DIR)
 
 
-try: #FIXME: find another way
+try:  # FIXME: find another way
     import __builtin__
     super_str = '__builtin__.super'
-except:
+except ImportError:
     super_str = 'builtins.super'
 
 
@@ -167,7 +167,9 @@ class WebDriverMixinTest(unittest.TestCase):
             'waitForAngular', self.mock_root_element
         )
 
-    def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(self):
+    def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(
+        self
+    ):
         """wait_for_angular() must not call the waitForAngular script, if
         ignore_synchronization is set to True."""
         self.instance.ignore_synchronization = True
@@ -361,7 +363,9 @@ class WebDriverMixinTest(unittest.TestCase):
         )
         mock_test_for_angular.assert_called_once_with()
 
-    def test_get_does_not_test_for_angular_if_ignore_synchronization_is_true(self):
+    def test_get_does_not_test_for_angular_if_ignore_synchronization_is_true(
+        self
+    ):
         """Verify that get() does not call _test_for_angular if
         ignore_synchronization is set to True."""
         mock_url = MagicMock()

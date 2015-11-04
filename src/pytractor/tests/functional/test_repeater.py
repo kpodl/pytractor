@@ -20,12 +20,15 @@ from pytractor.tests.functional.testserver import SimpleWebServerProcess
 
 from selenium.common.exceptions import NoSuchElementException
 
+
 class RepeaterTestCase(unittest.TestCase):
     """Test case class for testing repeater."""
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = TestDriver('http://localhost:{}/'.format(SimpleWebServerProcess.PORT))
+        cls.driver = TestDriver(
+            'http://localhost:{}/'.format(SimpleWebServerProcess.PORT)
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -44,4 +47,6 @@ class RepeaterTestCase(unittest.TestCase):
         self.assertEqual(element[4].text, 'F Friday')
 
     def test_find_element_by_repeater_returns_empty_list(self):
-        self.assertFalse(self.driver.find_elements_by_repeater('no-such in days'))
+        self.assertFalse(
+            self.driver.find_elements_by_repeater('no-such in days')
+        )
