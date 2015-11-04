@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 # Copyright 2014 Konrad Podloucky
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -64,12 +66,14 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'selenium>=2.47.3'
+        'selenium>=2.47.3',
+        'future>=0.15.2'
     ],
 
-    tests_require = [
+    tests_require=[
         'nose>=1.3.7',
         'mock>=1.0.1,<1.1.0'  # >= 1.1.0 seems to be broken.
     ],
-    test_suite = 'nose.collector'
+    test_suite='nose.collector',
+    use_2to3=True
 )

@@ -18,7 +18,7 @@ webdrivers.
 
 from functools import wraps
 from math import floor
-from urlparse import urljoin
+from future.moves.urllib.parse import urljoin
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.command import Command
@@ -65,10 +65,8 @@ class WebDriverMixin(object):
     tests to become flaky. This should be used only when necessary, such as
     when a page continuously polls an API using $timeout.
     """  # docstring adapted from protractor.js
-    _root_element = None
-    _base_url = None
 
-    def __init__(self, base_url, root_element, script_timeout=10,
+    def __init__(self, base_url='', root_element='body', script_timeout=10,
                  test_timeout=10, *args, **kwargs):
         self._base_url = base_url
         self._root_element = root_element
@@ -82,6 +80,8 @@ class WebDriverMixin(object):
         js_script = resource_string(__name__,
                                     '{}/{}'.format(CLIENT_SCRIPTS_DIR,
                                                    file_name))
+        if js_script:
+            js_script = js_script.decode('UTF-8')
         if async:
             result = self.execute_async_script(js_script, *args)
         else:
@@ -99,12 +99,12 @@ class WebDriverMixin(object):
         # We also get called from WebElement methods/properties.
         if driver_command in COMMANDS_NEEDING_WAIT:
             self.wait_for_angular()
+
         return super(WebDriverMixin, self).execute(driver_command,
                                                    params=params)
 
     def _test_for_angular(self):
-        return self._execute_client_script('testForAngular',
-                                           floor(self._test_timeout / 1000))
+        return self._execute_client_script('testForAngular', floor(self._test_timeout / 1000))
 
     def _location_equals(self, location):
         result = self.execute_script('return window.location.href')
@@ -130,6 +130,11 @@ class WebDriverMixin(object):
     def location_abs_url(self):
         return self._execute_client_script('getLocationAbsUrl',
                                            self._root_element, async=False)
+
+    @angular_wait_required
+    def find_elements_by_repeater(self, descriptor, using=None):
+        return self._execute_client_script('findAllRepeaterRows',
+                                           descriptor, False, using, async=False)
 
     @angular_wait_required
     def find_element(self, *args, **kwargs):
@@ -187,14 +192,14 @@ class WebDriverMixin(object):
 
     def get(self, url):
         super(WebDriverMixin, self).get('about:blank')
-        full_url = urljoin(self._base_url, url)
+        full_url = urljoin(str(self._base_url), str(url))
         self.execute_script(
             """
             window.name = "{}" + window.name;
             window.location.replace("{}");
             """.format(DEFER_LABEL, full_url)
         )
-        wait = WebDriverWait(self, 10)
+        wait = WebDriverWait(self, self._test_timeout)
         wait.until_not(self._location_equals, 'about:blank')
 
         if not self.ignore_synchronization:

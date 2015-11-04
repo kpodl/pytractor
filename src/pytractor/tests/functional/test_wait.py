@@ -23,7 +23,6 @@ from .testserver import SimpleWebServerProcess
 
 class AngularWaitTest(TestCase):
     """Test case class for testing waiting for angular."""
-    driver = None
 
     @classmethod
     def setUpClass(cls):

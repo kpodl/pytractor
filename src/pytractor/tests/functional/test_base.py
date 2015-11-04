@@ -23,7 +23,6 @@ from .testserver import SimpleWebServerProcess
 
 class WebDriverBaseTest(TestCase):
     """Tests the WebDriverMixin."""
-    driver = None
 
     @classmethod
     def setUpClass(cls):

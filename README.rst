@@ -27,7 +27,7 @@ The constructor expects two parameters: the base URL of your application and the
 
   from pytractor.webdriver import Firefox
 
-  driver = Firefox('http://localhost:8080/base_url', 'body')
+  driver = Firefox('http://localhost:8080/base_url')
 
 The base URL will be prepended to each URL you pass to the ``get()`` method (using ``urlparse.urljoin(base_url, get_url)``).
 
@@ -113,7 +113,7 @@ The ``location_abs_url`` property will retrieve the absolute URL from angular.
 Missing Features
 ----------------
 
-- Button text, repeater, css, and options locators.
+- Button text, and options locators.
 - Script/mock module injection.
 
 License
