@@ -172,6 +172,7 @@ class WebDriverMixin(object):
         else:
             return elements[0]
 
+    @angular_wait_required
     def find_elements_by_exact_binding(self, descriptor, using=None):
         elements = self._execute_client_script('findBindings', descriptor,
                                                True, using, async=False)
@@ -187,6 +188,7 @@ class WebDriverMixin(object):
         else:
             return elements[0]
 
+    @angular_wait_required
     def find_elements_by_model(self, descriptor, using=None):
         elements = self._execute_client_script('findByModel', descriptor,
                                                using, async=False)
@@ -223,6 +225,7 @@ class WebDriverMixin(object):
         url = self.execute_script('return window.location.href')
         self.get(url)
 
+    @angular_wait_required
     def set_location(self, url):
         result = self._execute_client_script('setLocation', self._root_element,
                                              url, async=False)

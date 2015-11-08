@@ -51,8 +51,8 @@ class AngularWaitRequiredDecoratorTest(unittest.TestCase):
         # wait_for_angular() should have been called
         mock_wait_for_angular.assert_called_once_with()
         # the check function should have been called
-        mock_check_function.assert_callled_once_with(mock_arg,
-                                                     kwarg=mock_kwarg)
+        mock_check_function.assert_called_once_with(mock_arg,
+                                                    kwarg=mock_kwarg)
 
 
 class WebDriverMixinConstructorTest(unittest.TestCase):
@@ -77,12 +77,11 @@ class WebDriverMixinConstructorTest(unittest.TestCase):
         test_timeout = 'TESTTIMEOUT'
         script_timeout = 'SCRIPTTIMEOUT'
 
-        with patch(
-            super_str
-        ) as mock_super, patch.object(
+        with patch.object(
+            self.ConstructorTester, 'constructor_called'
+        ) as mock_constructor_called, patch.object(
             self.TestDriver, 'set_script_timeout', create=True
         ) as mock_set_script_timeout:
-            mock_super.return_value = MagicMock()
             instance = self.TestDriver(base_url, root_element,
                                        test_timeout=test_timeout,
                                        script_timeout=script_timeout)
@@ -92,7 +91,7 @@ class WebDriverMixinConstructorTest(unittest.TestCase):
         self.assertIs(instance._root_element, root_element)
         self.assertIs(instance._test_timeout, test_timeout)
         # verify that the super class' constructor has been called
-        mock_super.return_value.constructor_called.assert_called_once()
+        mock_constructor_called.assert_called_once_with()
         # verify that set_script_timeout has been called
         mock_set_script_timeout.assert_called_once_with(script_timeout)
 
@@ -221,9 +220,9 @@ class WebDriverMixinTest(unittest.TestCase):
 
             result = getattr(self.instance, prop_name)
 
-        mock_wait_for_angular.assert_called_once()
+        mock_wait_for_angular.assert_called_once_with()
         mock_super.assert_called_once_with(WebDriverMixin, self.instance)
-        mock_prop.assert_called_once()
+        mock_prop.assert_called_once_with()
         self.assertIs(result, mock_prop.return_value)
 
     def test_current_url(self):
@@ -251,7 +250,7 @@ class WebDriverMixinTest(unittest.TestCase):
             method = getattr(self.instance, method_name)
             result = method(*mock_args)
 
-        mock_wait_for_angular.assert_called_once()
+        mock_wait_for_angular.assert_called_once_with()
         mock_super.assert_called_once_with(WebDriverMixin, self.instance)
         mock_super_method.assert_called_once_with(*mock_args)
         self.assertIs(result, mock_super_method.return_value)
@@ -272,7 +271,7 @@ class WebDriverMixinTest(unittest.TestCase):
         ) as mock_methods:
             result = self.instance.find_elements_by_binding(mock_descriptor,
                                                             mock_using)
-        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
             'findBindings', mock_descriptor, False, mock_using, async=False
         )
@@ -392,7 +391,7 @@ class WebDriverMixinTest(unittest.TestCase):
             self.instance.refresh()
         mock_execute_script, mock_get = (mock_methods['execute_script'],
                                          mock_methods['get'])
-        mock_execute_script.assert_called_once()
+        self.assertEqual(mock_execute_script.call_count, 1)
         mock_get.assert_called_once_with(mock_execute_script.return_value)
 
     def test_find_element_by_exact_binding_calls_find_elements(self):
@@ -437,7 +436,7 @@ class WebDriverMixinTest(unittest.TestCase):
                 mock_descriptor, mock_using
             )
 
-        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
             'findBindings', mock_descriptor, True, mock_using, async=False
         )
@@ -484,7 +483,7 @@ class WebDriverMixinTest(unittest.TestCase):
                 mock_descriptor, mock_using
             )
 
-        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
             'findByModel', mock_descriptor, mock_using, async=False
         )
@@ -498,7 +497,7 @@ class WebDriverMixinTest(unittest.TestCase):
         ) as mock_methods:
             result = self.instance.location_abs_url
 
-        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
             'getLocationAbsUrl', self.instance._root_element, async=False
         )
@@ -513,7 +512,7 @@ class WebDriverMixinTest(unittest.TestCase):
         ) as mock_methods:
             result = self.instance.set_location(url)
 
-        mock_methods['wait_for_angular'].assert_called_once()
+        mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
             'setLocation', self.instance._root_element, url, async=False
         )
