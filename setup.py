@@ -72,7 +72,7 @@ setup(
 
     tests_require=[
         'nose>=1.3.7',
-        'mock>=1.0.1,<1.1.0'  # >= 1.1.0 seems to be broken.
+        'mock>=1.3.0',
     ],
     test_suite='nose.collector',
     use_2to3=True
