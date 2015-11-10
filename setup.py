@@ -66,7 +66,7 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'selenium>=2.47.3',
+        'selenium>=2.48.0',
         'future>=0.15.2'
     ],
 
