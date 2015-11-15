@@ -21,7 +21,7 @@ Basics
 
 Drivers containing the helper methods for testing Angular.js can be found in the ``pytractor.webdriver`` module.
 
-The constructor expects two parameters: the base URL of your application and the selector for the DOM element which is the root of your Angular.js app.
+The constructor expects the base URL of your application.
 
 ::
 
@@ -30,6 +30,15 @@ The constructor expects two parameters: the base URL of your application and the
   driver = Firefox('http://localhost:8080/base_url')
 
 The base URL will be prepended to each URL you pass to the ``get()`` method (using ``urlparse.urljoin(base_url, get_url)``).
+
+The constructor also accepts the parameters:
+
+``root_element``
+  A selector for the DOM element that is the root of your Angular.js app (default: ``'body'``).
+``script_timeout``
+  The amount of seconds (default: 10) to wait for a script executing asynchroneously (see selenium's ``set_script_timeout()``.
+``test_timeout``
+  The amount of seconds (default: 10) to wait for the script which verifies whether Angular.js is indeed used on the page.
 
 If no Angular.js app can be found, ``get()`` will raise an exception.
 
@@ -89,6 +98,11 @@ then the ``<input>`` element can be found with
 ::
 
     driver.find_element_by_model('person.name')
+
+Finding elements by repeater
+++++++++++++++++++++++++++++
+``find_element(s)_by_repeater('item in list')`` can be used to locate elements that
+use the expression ``ng-repeat="item in list"``.
 
 
 Other Methods and Properties
