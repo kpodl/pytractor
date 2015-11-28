@@ -143,6 +143,18 @@ class ByModelLocatorTest(LocatorTestCase):
 
         self.assertEqual(len(inputs), 3)
 
+    def test_find_elements_by_model_returns_empty_list_if_nothing_found(self):
+        """find_elements_by_model() should return an empty list if no elements
+        have been found.
+
+        This tests for issue #10 which comes from protractor's findByModel.js
+        script.
+        """
+        result = self.driver.find_elements_by_model('this-model-does-not-exist')
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
+
 
 class ByRepeaterTestCase(LocatorTestCase):
     def setUp(self):

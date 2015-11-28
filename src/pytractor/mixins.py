@@ -192,6 +192,10 @@ class WebDriverMixin(object):
     def find_elements_by_model(self, descriptor, using=None):
         elements = self._execute_client_script('findByModel', descriptor,
                                                using, async=False)
+        # Workaround for issue #10: findByModel.js returns None instead of empty
+        # list if no element has been found.
+        if elements is None:
+            elements = []
         return elements
 
     def get(self, url):

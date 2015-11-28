@@ -490,6 +490,20 @@ class WebDriverMixinTest(unittest.TestCase):
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
 
+    def test_find_elements_by_model_returns_empty_list_if_script_returns_none(
+        self
+    ):
+        """Verify that find_elements_by_model() returns an empty list if
+        the protractor script returns None.
+        This is a test for issue #10
+        """
+        with patch.object(self.instance, '_execute_client_script',
+                          return_value=None):
+            result = self.instance.find_elements_by_model('does-not-exist')
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
+
     def test_location_abs_url_calls_protractor_script(self):
         with patch.multiple(
             self.instance, wait_for_angular=DEFAULT,
