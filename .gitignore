@@ -1,5 +1,8 @@
 *.pyc
 *~
+# build directories
+build/
+dist/
 # Eclipse - Pydev
 .project
 .pydevproject
