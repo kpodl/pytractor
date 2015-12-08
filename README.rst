@@ -1,8 +1,9 @@
 =========
 pytractor
 =========
-.. image:: https://travis-ci.org/kpodl/pytractor.svg
-   :alt: Build Status
+.. image:: https://travis-ci.org/kpodl/pytractor.svg?branch=master
+    :target: https://travis-ci.org/kpodl/pytractor
+    :alt: Build Status
 
 **Angular.js for the testing goat: Utilities for testing Angular.js applications with Selenium for Python.**
 
