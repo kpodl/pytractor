@@ -93,7 +93,8 @@ class WebDriverMixin(object):
             return
         else:
             return self._execute_client_script('waitForAngular',
-                                               self._root_element)
+                                               self._root_element,
+                                               async=True)
 
     def execute(self, driver_command, params=None):
         # We also get called from WebElement methods/properties.

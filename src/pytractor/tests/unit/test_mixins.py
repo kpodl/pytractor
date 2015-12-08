@@ -149,21 +149,22 @@ class WebDriverMixinTest(unittest.TestCase):
         self.verify__execute_client_script_call(False)
 
     def verify_function_executes_script_with(self, func_to_call,
-                                             script_name, *script_args):
+                                             script_name, *script_args,
+                                             **script_kwargs):
         with patch.object(
             self.instance, '_execute_client_script'
         ) as mock_execute_client_script:
             result = func_to_call()
         mock_execute_client_script.assert_called_once_with(
             script_name,
-            *script_args
+            *script_args, **script_kwargs
         )
         self.assertIs(result, mock_execute_client_script.return_value)
 
     def test_wait_for_angular(self):
         self.verify_function_executes_script_with(
             self.instance.wait_for_angular,
-            'waitForAngular', self.mock_root_element
+            'waitForAngular', self.mock_root_element, async=True
         )
 
     def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(
