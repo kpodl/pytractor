@@ -7,6 +7,10 @@ pytractor
 
 **Angular.js for the testing goat: Utilities for testing Angular.js applications with Selenium for Python.**
 
+================================
+This project has been abandoned!
+================================
+**Unfortunately, due to lack of time and a switch to robotframework-extendedselenium2library this project has been abandoned. Please contact me if you want to take over.**
 
 Overview
 --------
