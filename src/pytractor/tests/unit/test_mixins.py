@@ -20,8 +20,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from pytractor.exceptions import AngularNotFoundException
 from pytractor.mixins import (WebDriverMixin, angular_wait_required,
-                              CLIENT_SCRIPTS_DIR)
-
+                              CLIENT_SCRIPTS_DIR, AngularVersion)
 
 try:  # FIXME: find another way
     import __builtin__
@@ -40,7 +39,8 @@ class AngularWaitRequiredDecoratorTest(unittest.TestCase):
 
     def test_angular_wait_required(self):
         with patch.multiple(self, wait_for_angular=DEFAULT,
-                            check_function=DEFAULT, create=True) as patched:
+                            check_function=DEFAULT, create=True,
+                            angular_version=AngularVersion.VER_1) as patched:
             mock_wait_for_angular = patched['wait_for_angular']
             mock_check_function = patched['check_function']
             mock_arg = MagicMock()
@@ -164,7 +164,7 @@ class WebDriverMixinTest(unittest.TestCase):
     def test_wait_for_angular(self):
         self.verify_function_executes_script_with(
             self.instance.wait_for_angular,
-            'waitForAngular', self.mock_root_element, async=True
+            'waitForAngular', self.mock_root_element, False, async=True
         )
 
     def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(
@@ -186,7 +186,8 @@ class WebDriverMixinTest(unittest.TestCase):
         self.instance._test_timeout = 5000
         self.verify_function_executes_script_with(
             self.instance._test_for_angular,
-            'testForAngular', self.instance._test_timeout / 1000
+            'testForAngular', self.instance._test_timeout / 1000,
+            False
         )
 
     def test__location_equals(self):
@@ -316,6 +317,7 @@ class WebDriverMixinTest(unittest.TestCase):
             'pytractor.mixins.WebDriverWait'
         ) as mock_webdriverwait_class, patch.multiple(
             self.instance, _test_for_angular=DEFAULT, execute_script=DEFAULT,
+            execute_async_script=DEFAULT,
             create=True  # needed for execute_script
         ) as mock_methods:
             mock_test_for_angular = mock_methods['_test_for_angular']
@@ -326,9 +328,9 @@ class WebDriverMixinTest(unittest.TestCase):
             self.instance.get(mock_url)
         mock_super.assert_called_once_with(WebDriverMixin, self.instance)
         mock_super.return_value.get.assert_called_once_with('about:blank')
-        self.assertEqual(len(mock_execute_script.mock_calls), 2)
+        self.assertEqual(len(mock_execute_script.mock_calls), 1)
         mock_webdriverwait_class.assert_called_once_with(self.instance,
-                                                         10)
+                                                         5000)
         mock_webdriverwait_instance = mock_webdriverwait_class.return_value
         mock_webdriverwait_instance.until_not.assert_called_once_with(
             self.instance._location_equals, 'about:blank'
@@ -347,7 +349,7 @@ class WebDriverMixinTest(unittest.TestCase):
         ) as mock_methods:
             mock_test_for_angular = mock_methods['_test_for_angular']
             # return a falsy value to indicate that angular was not found
-            mock_test_for_angular.return_value = (False, 'ERROR')
+            mock_test_for_angular.return_value = {'message': 'ERROR'}
             mock_execute_script = mock_methods['execute_script']
 
             with self.assertRaises(AngularNotFoundException):
@@ -356,7 +358,7 @@ class WebDriverMixinTest(unittest.TestCase):
         mock_super.return_value.get.assert_called_once_with('about:blank')
         self.assertEqual(len(mock_execute_script.mock_calls), 1)
         mock_webdriverwait_class.assert_called_once_with(self.instance,
-                                                         10)
+                                                         5000)
         mock_webdriverwait_instance = mock_webdriverwait_class.return_value
         mock_webdriverwait_instance.until_not.assert_called_once_with(
             self.instance._location_equals, 'about:blank'

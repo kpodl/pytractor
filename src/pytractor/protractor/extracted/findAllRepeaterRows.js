@@ -29,7 +29,7 @@ function repeaterMatch(ngRepeat, repeater, exact) {
       if (repeaterMatch(repeatElems[i].getAttribute(attr), repeater, exact)) {
         var elem = repeatElems[i];
         while (elem.nodeType != 8 ||
-            !repeaterMatch(elem.nodeValue, repeater, exact)) {
+            !repeaterMatch(elem.nodeValue, repeater)) {
           if (elem.nodeType == 1) {
             rows.push(elem);
           }

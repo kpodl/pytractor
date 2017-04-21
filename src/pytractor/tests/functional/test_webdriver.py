@@ -41,7 +41,7 @@ class WebDriverTestBase(object):
         cls.driver.quit()
 
     def test_find_element_by_binding(self):
-        self.driver.get('index.html#/form')
+        self.driver.get('/ng1/#/form')
         element = self.driver.find_element_by_binding('greeting')
         self.assertIsInstance(element, WebElement)
         self.assertEqual(element.text, 'Hiya')

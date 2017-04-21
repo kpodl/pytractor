@@ -36,7 +36,7 @@ class HelperFunctionTestCase(TestCase):
         cls.driver.quit()
 
     def setUp(self):
-        self.driver.get('index.html')
+        self.driver.get('/ng1/')
 
     def test_location_abs_url_returns_absolute_url(self):
         url = self.driver.location_abs_url

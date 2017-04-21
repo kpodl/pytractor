@@ -1,9 +1,16 @@
-window.clientSideScripts = {waitForAngular: function (rootSelector, callback) {
+window.clientSideScripts = {waitForAngular: function (rootSelector, ng12Hybrid, callback) {
   var el = document.querySelector(rootSelector);
 
   try {
+    if (!ng12Hybrid && window.getAngularTestability) {
+      window.getAngularTestability(el).whenStable(callback);
+      return;
+    }
     if (!window.angular) {
-      throw new Error('angular could not be found on the window');
+      throw new Error('window.angular is undefined.  This could be either ' +
+          'because this is a non-angular page or because your test involves ' +
+          'client-side navigation, which can interfere with Protractor\'s ' +
+          'bootstrapping.  See http://git.io/v4gXM for details');
     }
     if (angular.getTestability) {
       angular.getTestability(el).whenStable(callback);
@@ -15,6 +22,22 @@ window.clientSideScripts = {waitForAngular: function (rootSelector, callback) {
       angular.element(el).injector().get('$browser').
           notifyWhenNoOutstandingRequests(callback);
     }
+  } catch (err) {
+    callback(err.message);
+  }
+}, waitForAllAngular2: function (callback) {
+  try {
+    var testabilities = window.getAllAngularTestabilities();
+    var count = testabilities.length;
+    var decrement = function() {
+      count--;
+      if (count === 0) {
+        callback();
+      }
+    };
+    testabilities.forEach(function(testability) {
+      testability.whenStable(decrement);
+    });
   } catch (err) {
     callback(err.message);
   }
@@ -83,7 +106,7 @@ function repeaterMatch(ngRepeat, repeater, exact) {
         var elem = repeatElems[i];
         var row = [];
         while (elem.nodeType != 8 ||
-            !repeaterMatch(elem.nodeValue, repeater, exact)) {
+            !repeaterMatch(elem.nodeValue, repeater)) {
           if (elem.nodeType == 1) {
             row.push(elem);
           }
@@ -127,7 +150,7 @@ function repeaterMatch(ngRepeat, repeater, exact) {
       if (repeaterMatch(repeatElems[i].getAttribute(attr), repeater, exact)) {
         var elem = repeatElems[i];
         while (elem.nodeType != 8 ||
-            !repeaterMatch(elem.nodeValue, repeater, exact)) {
+            !repeaterMatch(elem.nodeValue, repeater)) {
           if (elem.nodeType == 1) {
             rows.push(elem);
           }
@@ -175,7 +198,7 @@ function repeaterMatch(ngRepeat, repeater, exact) {
         var elem = repeatElems[i];
         var row = [];
         while (elem.nodeType != 8 || (elem.nodeValue &&
-            !repeaterMatch(elem.nodeValue, repeater, exact))) {
+            !repeaterMatch(elem.nodeValue, repeater))) {
           if (elem.nodeType == 1) {
             row.push(elem);
           }
@@ -269,7 +292,7 @@ function repeaterMatch(ngRepeat, repeater, exact) {
         var elem = repeatElems[i];
         var row = [];
         while (elem.nodeType != 8 || (elem.nodeValue &&
-            !repeaterMatch(elem.nodeValue, repeater, exact))) {
+            !repeaterMatch(elem.nodeValue, repeater))) {
           if (elem.nodeType == 1) {
             row.push(elem);
           }
@@ -402,7 +425,7 @@ function repeaterMatch(ngRepeat, repeater, exact) {
     }
   }
   return matches;
-}, testForAngular: function (attempts, asyncCallback) {
+}, testForAngular: function (attempts, ng12Hybrid, asyncCallback) {
   var callback = function(args) {
     setTimeout(function() {
       asyncCallback(args);
@@ -410,19 +433,21 @@ function repeaterMatch(ngRepeat, repeater, exact) {
   };
   var check = function(n) {
     try {
-      if (window.angular && window.angular.resumeBootstrap) {
-        callback([true, null]);
+      if (!ng12Hybrid && window.getAllAngularTestabilities) {
+        callback({ver: 2});
+      } else if (window.angular && window.angular.resumeBootstrap) {
+        callback({ver: 1});
       } else if (n < 1) {
         if (window.angular) {
-          callback([false, 'angular never provided resumeBootstrap']);
+          callback({message: 'angular never provided resumeBootstrap'});
         } else {
-          callback([false, 'retries looking for angular exceeded']);
+          callback({message: 'retries looking for angular exceeded'});
         }
       } else {
         window.setTimeout(function() {check(n - 1);}, 1000);
       }
     } catch (e) {
-      callback([false, e]);
+      callback({message: e});
     }
   };
   check(attempts);

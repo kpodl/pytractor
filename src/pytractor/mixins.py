@@ -32,6 +32,8 @@ CLIENT_SCRIPTS_DIR = 'protractor/extracted'
 DEFER_LABEL = 'NG_DEFER_BOOTSTRAP!'
 # These are commands that need synchronization with the angular app.
 COMMANDS_NEEDING_WAIT = [
+    Command.FIND_ELEMENT,
+    Command.FIND_ELEMENTS,
     Command.CLICK_ELEMENT,
     Command.SEND_KEYS_TO_ELEMENT,
     Command.GET_ELEMENT_TAG_NAME,
@@ -46,6 +48,16 @@ COMMANDS_NEEDING_WAIT = [
     Command.SUBMIT_ELEMENT,
     Command.CLEAR_ELEMENT
 ]
+
+
+class AngularVersion(object):
+    VER_1 = 'ng1'
+    HYBRID = 'hybrid'
+    VER_2 = 'ng2'
+
+    @staticmethod
+    def is_hybrid(version):
+        return True if version is AngularVersion.HYBRID else False
 
 
 def angular_wait_required(wrapped):
@@ -67,10 +79,11 @@ class WebDriverMixin(object):
     """  # docstring adapted from protractor.js
 
     def __init__(self, base_url='', root_element='body', script_timeout=10,
-                 test_timeout=10, *args, **kwargs):
+                 test_timeout=5000, *args, **kwargs):
         self._base_url = base_url
         self._root_element = root_element
         self._test_timeout = test_timeout
+        self.angular_version = None
         super(WebDriverMixin, self).__init__(*args, **kwargs)
         self.set_script_timeout(script_timeout)
 
@@ -80,6 +93,7 @@ class WebDriverMixin(object):
         js_script = resource_string(__name__,
                                     '{}/{}'.format(CLIENT_SCRIPTS_DIR,
                                                    file_name))
+
         if js_script:
             js_script = js_script.decode('UTF-8')
         if async:
@@ -89,16 +103,18 @@ class WebDriverMixin(object):
         return result
 
     def wait_for_angular(self):
-        if self.ignore_synchronization:
-            return
-        else:
-            return self._execute_client_script('waitForAngular',
-                                               self._root_element,
-                                               async=True)
+        if not self.ignore_synchronization:
+            if self.angular_version == AngularVersion.VER_2:
+                return self._execute_client_script(
+                    'waitForAllAngular2', async=True)
+            else:
+                return self._execute_client_script(
+                    'waitForAngular', self._root_element,
+                    AngularVersion.is_hybrid(self.angular_version), async=True)
 
     def execute(self, driver_command, params=None):
         # We also get called from WebElement methods/properties.
-        if driver_command in COMMANDS_NEEDING_WAIT:
+        if driver_command in COMMANDS_NEEDING_WAIT and not self.ignore_synchronization:
             self.wait_for_angular()
 
         return super(WebDriverMixin, self).execute(driver_command,
@@ -106,7 +122,8 @@ class WebDriverMixin(object):
 
     def _test_for_angular(self):
         return self._execute_client_script('testForAngular',
-                                           floor(self._test_timeout / 1000))
+                                           floor(self._test_timeout / 1000),
+                                           AngularVersion.is_hybrid(self.angular_version))
 
     def _location_equals(self, location):
         result = self.execute_script('return window.location.href')
@@ -199,6 +216,12 @@ class WebDriverMixin(object):
             elements = []
         return elements
 
+    def find_element_by_button_text(self, text, using=None):
+        element = self._execute_client_script(
+            'findByButtonText', text, using, async=False)
+        if element:
+            return element[0]
+
     def get(self, url):
         super(WebDriverMixin, self).get('about:blank')
         full_url = urljoin(str(self._base_url), str(url))
@@ -213,9 +236,8 @@ class WebDriverMixin(object):
 
         if not self.ignore_synchronization:
             test_result = self._test_for_angular()
-            angular_on_page = test_result[0]
-            if not angular_on_page:
-                message = test_result[1]
+            if not test_result or 'message' in test_result:
+                message = test_result['message']
                 raise AngularNotFoundException(
                     'Angular could not be found on page: {}:'
                     ' {}'.format(full_url, message)
@@ -224,7 +246,15 @@ class WebDriverMixin(object):
             # return self.execute_script(
             #     'angular.resumeBootstrap(arguments[0]);'
             # )
-            self.execute_script('angular.resumeBootstrap();')
+            if 'ver' in test_result and test_result['ver'] == 2\
+                    or self.angular_version == AngularVersion.VER_2:
+                self.angular_version = AngularVersion.VER_2
+            elif 'ver' in test_result and test_result['ver'] == 1\
+                    or self.angular_version == AngularVersion.HYBRID:
+                self.angular_version = AngularVersion.HYBRID
+                self.execute_script('angular.resumeBootstrap();')
+
+        self.wait_for_angular()
 
     def refresh(self):
         url = self.execute_script('return window.location.href')

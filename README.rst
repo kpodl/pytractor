@@ -19,6 +19,12 @@ Overview
 
 It is built on some parts of `protractor <https://github.com/angular/protractor>`_, the "official" Javascript E2E/Scenario testing framework for `Angular.js <https://angularjs.org/>`_.
 
+Supported Version
+-----------------
+
+Angular 1
+Angular 1.5 (hybrid)
+Angular 2
 
 Usage
 -----
@@ -113,6 +119,14 @@ Finding elements by repeater
 ``find_element(s)_by_repeater('item in list')`` can be used to locate elements that
 use the expression ``ng-repeat="item in list"``.
 
+Finding element by button text
+++++++++++++++++++++++++++++++
+``find_element_by_button_text('text')`` can be used to locate button by text
+Suppose you have the element
+::
+
+    <button class="action">text</button>
+
 
 Other Methods and Properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -136,7 +150,7 @@ The ``location_abs_url`` property will retrieve the absolute URL from angular.
 Missing Features
 ----------------
 
-- Button text, and options locators.
+- Options locators.
 - Script/mock module injection.
 
 License

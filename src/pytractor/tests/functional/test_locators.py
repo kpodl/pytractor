@@ -41,8 +41,7 @@ class ByBindingLocatorTest(LocatorTestCase):
     """Tests the locators of the WebDriverMixin that deal with bindings."""
 
     def setUp(self):
-        self.driver.get('index.html#/form')
-
+        self.driver.get('/ng1/#/form')
 
     def test_find_element_by_binding_raises_error_if_no_element_matches(self):
         with self.assertRaises(NoSuchElementException):
@@ -79,8 +78,9 @@ class ByBindingLocatorTest(LocatorTestCase):
 
 
 class ByModelLocatorTest(LocatorTestCase):
+
     def setUp(self):
-        self.driver.get('index.html#/form')
+        self.driver.get('/ng1/#/form')
 
     def test_find_element_by_model_finds_element_by_text_input_model(self):
         username = self.driver.find_element_by_model('username')
@@ -158,7 +158,7 @@ class ByModelLocatorTest(LocatorTestCase):
 
 class ByRepeaterTestCase(LocatorTestCase):
     def setUp(self):
-        self.driver.get('index.html#/repeater')
+        self.driver.get('/ng1/#/repeater')
 
     def test_find_elements_by_repeater_returns_correct_element(self):
         element = self.driver.find_elements_by_repeater('allinfo in days')

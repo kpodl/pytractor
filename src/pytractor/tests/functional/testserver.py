@@ -41,14 +41,14 @@ class TestServerHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(text.encode('utf-8'))
 
     def do_GET(self):
-        if self.path == '/fastcall':
+        if self.path == '/ng1/fastcall':
             self.send_text_response('done')
-        elif self.path == '/slowcall':
+        elif self.path == '/ng1/slowcall':
             time.sleep(5)
             self.send_text_response('finally done')
-        elif self.path == '/fastTemplateUrl':
+        elif self.path == '/ng1/fastTemplateUrl':
             self.send_text_response('fast template contents')
-        elif self.path == '/slowTemplateUrl':
+        elif self.path == '/ng1/slowTemplateUrl':
             time.sleep(5)
             self.send_text_response('slow template contents')
         else:

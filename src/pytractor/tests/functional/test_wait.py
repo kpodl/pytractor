@@ -36,7 +36,7 @@ class AngularWaitTest(TestCase):
         cls.driver.quit()
 
     def setUp(self):
-        self.driver.get('index.html#/async')
+        self.driver.get('/ng1/#/async')
 
     def test_waits_for_http_calls(self):
         status = self.driver.find_element_by_binding('slowHttpStatus')
@@ -46,7 +46,6 @@ class AngularWaitTest(TestCase):
         self.assertEqual(status.text, 'not started')
 
         button.click()
-
         self.assertEqual(status.text, 'done')
 
     def test_waits_for_long_javascript_execution(self):

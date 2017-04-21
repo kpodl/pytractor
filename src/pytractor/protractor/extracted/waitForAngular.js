@@ -1,9 +1,16 @@
-try { return (function (rootSelector, callback) {
+try { return (function (rootSelector, ng12Hybrid, callback) {
   var el = document.querySelector(rootSelector);
 
   try {
+    if (!ng12Hybrid && window.getAngularTestability) {
+      window.getAngularTestability(el).whenStable(callback);
+      return;
+    }
     if (!window.angular) {
-      throw new Error('angular could not be found on the window');
+      throw new Error('window.angular is undefined.  This could be either ' +
+          'because this is a non-angular page or because your test involves ' +
+          'client-side navigation, which can interfere with Protractor\'s ' +
+          'bootstrapping.  See http://git.io/v4gXM for details');
     }
     if (angular.getTestability) {
       angular.getTestability(el).whenStable(callback);
