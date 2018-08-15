@@ -142,7 +142,7 @@ Missing Features
 License
 -------
 
-pytractor is licensed under the the Apache License, Version 2.0:
+pytractor is licensed under the Apache License, Version 2.0:
 http://www.apache.org/licenses/LICENSE-2.0
 
 protractor is Copyright (c) 2010-2014 Google, Inc. and licensed under the MIT license. See the respective directory for a copy of the license.
