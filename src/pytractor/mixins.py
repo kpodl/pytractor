@@ -75,14 +75,14 @@ class WebDriverMixin(object):
         self.set_script_timeout(script_timeout)
 
     def _execute_client_script(self, script_name, *args, **kwargs):
-        async = kwargs.pop('async', True)
+        is_async = kwargs.pop('is_async', True)
         file_name = '{}.js'.format(script_name)
         js_script = resource_string(__name__,
                                     '{}/{}'.format(CLIENT_SCRIPTS_DIR,
                                                    file_name))
         if js_script:
             js_script = js_script.decode('UTF-8')
-        if async:
+        if is_async:
             result = self.execute_async_script(js_script, *args)
         else:
             result = self.execute_script(js_script, *args)
@@ -94,7 +94,7 @@ class WebDriverMixin(object):
         else:
             return self._execute_client_script('waitForAngular',
                                                self._root_element,
-                                               async=True)
+                                               is_async=True)
 
     def execute(self, driver_command, params=None):
         # We also get called from WebElement methods/properties.
@@ -131,13 +131,13 @@ class WebDriverMixin(object):
     @angular_wait_required
     def location_abs_url(self):
         return self._execute_client_script('getLocationAbsUrl',
-                                           self._root_element, async=False)
+                                           self._root_element, is_async=False)
 
     @angular_wait_required
     def find_elements_by_repeater(self, descriptor, using=None):
         return self._execute_client_script('findAllRepeaterRows',
                                            descriptor, False, using,
-                                           async=False)
+                                           is_async=False)
 
     @angular_wait_required
     def find_element(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class WebDriverMixin(object):
     @angular_wait_required
     def find_elements_by_binding(self, descriptor, using=None):
         elements = self._execute_client_script('findBindings', descriptor,
-                                               False, using, async=False)
+                                               False, using, is_async=False)
         return elements
 
     def find_element_by_binding(self, descriptor, using=None):
@@ -176,7 +176,7 @@ class WebDriverMixin(object):
     @angular_wait_required
     def find_elements_by_exact_binding(self, descriptor, using=None):
         elements = self._execute_client_script('findBindings', descriptor,
-                                               True, using, async=False)
+                                               True, using, is_async=False)
         return elements
 
     def find_element_by_model(self, descriptor, using=None):
@@ -192,7 +192,7 @@ class WebDriverMixin(object):
     @angular_wait_required
     def find_elements_by_model(self, descriptor, using=None):
         elements = self._execute_client_script('findByModel', descriptor,
-                                               using, async=False)
+                                               using, is_async=False)
         # Workaround for issue #10: findByModel.js returns None instead of empty
         # list if no element has been found.
         if elements is None:
@@ -233,5 +233,5 @@ class WebDriverMixin(object):
     @angular_wait_required
     def set_location(self, url):
         result = self._execute_client_script('setLocation', self._root_element,
-                                             url, async=False)
+                                             url, is_async=False)
         return result

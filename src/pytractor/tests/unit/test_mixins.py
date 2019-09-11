@@ -108,7 +108,7 @@ class WebDriverMixinTest(unittest.TestCase):
                                        self.mock_root_element)
 
     @patch('pytractor.mixins.resource_string')
-    def verify__execute_client_script_call(self, async, mock_resource_string):
+    def verify__execute_client_script_call(self, is_async, mock_resource_string):
         with patch.multiple(
             self.instance,
             execute_async_script=DEFAULT, execute_script=DEFAULT,
@@ -121,7 +121,7 @@ class WebDriverMixinTest(unittest.TestCase):
                                             'execute_async_script')]
             mock_arg = MagicMock()
             result = self.instance._execute_client_script('SCRIPT', mock_arg,
-                                                          async=async)
+                                                          is_async=is_async)
         # the script was read correctly with resource_string()
         mock_resource_string.assert_called_once_with(
             'pytractor.mixins',
@@ -129,7 +129,7 @@ class WebDriverMixinTest(unittest.TestCase):
         )
         # execute_async_script or execute_script were called (but not both)
         script_content = mock_resource_string.return_value.decode()
-        if async:
+        if is_async:
             mock_execute_async_script.assert_called_once_with(script_content,
                                                               mock_arg)
             self.assertEqual(len(mock_execute_script.mock_calls), 0)
@@ -164,7 +164,7 @@ class WebDriverMixinTest(unittest.TestCase):
     def test_wait_for_angular(self):
         self.verify_function_executes_script_with(
             self.instance.wait_for_angular,
-            'waitForAngular', self.mock_root_element, async=True
+            'waitForAngular', self.mock_root_element, is_async=True
         )
 
     def test_wait_for_angular_does_not_call_script_if_ignore_synchronization(
@@ -274,7 +274,7 @@ class WebDriverMixinTest(unittest.TestCase):
                                                             mock_using)
         mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
-            'findBindings', mock_descriptor, False, mock_using, async=False
+            'findBindings', mock_descriptor, False, mock_using, is_async=False
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
@@ -439,7 +439,7 @@ class WebDriverMixinTest(unittest.TestCase):
 
         mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
-            'findBindings', mock_descriptor, True, mock_using, async=False
+            'findBindings', mock_descriptor, True, mock_using, is_async=False
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
@@ -486,7 +486,7 @@ class WebDriverMixinTest(unittest.TestCase):
 
         mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
-            'findByModel', mock_descriptor, mock_using, async=False
+            'findByModel', mock_descriptor, mock_using, is_async=False
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
@@ -514,7 +514,7 @@ class WebDriverMixinTest(unittest.TestCase):
 
         mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
-            'getLocationAbsUrl', self.instance._root_element, async=False
+            'getLocationAbsUrl', self.instance._root_element, is_async=False
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
@@ -529,7 +529,7 @@ class WebDriverMixinTest(unittest.TestCase):
 
         mock_methods['wait_for_angular'].assert_called_once_with()
         mock_methods['_execute_client_script'].assert_called_once_with(
-            'setLocation', self.instance._root_element, url, async=False
+            'setLocation', self.instance._root_element, url, is_async=False
         )
         self.assertIs(result,
                       mock_methods['_execute_client_script'].return_value)
